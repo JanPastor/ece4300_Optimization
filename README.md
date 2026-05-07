@@ -120,3 +120,85 @@ run 300ns
 ```
 
 5. Right-click signals → **Radix → Unsigned Decimal** for readable values.
+
+# Jesus Ruvalcaba Test Bench  
+This project implements a 5-stage pipelined MIPS processor in Verilog with a forwarding optimization to reduce data hazards and decrease the number of required NOP instructions.  
+  
+The pipeline stages are:  
+IF -> ID -> EX -> MEM -> WB  
+  
+<img width="1641" height="627" alt="image" src="https://github.com/user-attachments/assets/d2cce974-e7b6-4586-be7c-8f622b8c68b9" />
+  
+# Pipeline Stages   
+IF - Instruction Fetch  
+Program Counter (PC)  
+Instruction Memory  
+PC + 4 Adder  
+ID - Instruction Decode  
+Control Unit  
+Register File  
+Sign Extension  
+EX - Execute  
+ALU  
+ALU Control  
+ALU Input Muxes  
+MEM - Memory  
+Data Memory  
+Branch Logic  
+WB - Writeback  
+Writes results back into the register file  
+  
+Forwarding Optimization  
+Problem  
+  
+In a pipelined processor, multiple instructions run at the same time. Sometimes an instruction needs a register value before the previous instruction has finished writing it back.  
+  
+Example:  
+  
+add $1, $2, $3  
+add $4, $1, $5  
+  
+The second instruction needs the updated value of $1 immediately.  
+  
+Without forwarding:  
+    
+the processor must stall  
+NOP instructions are inserted  
+performance decreases  
+  
+Solution: Forwarding  
+  
+A forwarding unit was added to send ALU results directly back into the execute stage without waiting for writeback.  
+  
+This allows dependent instructions to execute back-to-back with fewer stalls.  
+  
+Forwarding paths were added from:  
+  
+EX/MEM -> EX  
+MEM/WB -> EX  
+Forwarding Signals  
+00 = No forwarding  
+01 = Forward from MEM/WB  
+10 = Forward from EX/MEM  
+  
+ForwardA  
+  
+Controls forwarding for ALU input A.  
+    
+ForwardB  
+  
+Controls forwarding for ALU input B.  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
